@@ -9,7 +9,7 @@ const analyticsRoutes = require('./routes/analyticsRoutes');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
