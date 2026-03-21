@@ -25,6 +25,6 @@ app.use('/analytics', analyticsRoutes);
 // Error handler
 app.use(errorMiddleware);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Debt Tracker running at http://localhost:${PORT}`);
 });
