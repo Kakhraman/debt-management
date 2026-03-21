@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debt Tracker</title>
+  <link rel="stylesheet" href="/styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- Runs synchronously before first paint — eliminates auth flash on reload -->
+<script>
+  (function () {
+    var token = localStorage.getItem('token');
+    document.documentElement.style.setProperty('--auth-display', token ? 'none'  : 'flex');
+    document.documentElement.style.setProperty('--app-display',  token ? 'block' : 'none');
+  })();
+</script>
+
+<!-- ─── AUTH SCREEN ─────────────────────────────────────────────────── -->
+<div id="auth-screen" style="display:var(--auth-display,flex)">
+  <div class="auth-box">
+
+    <!-- Login form -->
+    <form id="login-form">
+      <h1>Debt Tracker</h1>
+      <p>Sign in to manage your debts</p>
+      <div class="form-group">
+        <label>Login</label>
+        <input type="text" name="login" placeholder="your_login" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem;">Sign In</button>
+      <p style="text-align:center;margin-top:1rem;font-size:0.8rem;color:var(--muted)">
+        No account? <button type="button" id="show-register" style="background:none;border:none;color:var(--blue);cursor:pointer;font-size:0.8rem;">Create one</button>
+      </p>
+    </form>
+
+    <!-- Register form -->
+    <form id="register-form" style="display:none;">
+      <h1>Create Account</h1>
+      <p>Set up your personal debt tracker</p>
+      <div class="form-group">
+        <label>Login</label>
+        <input type="text" name="login" placeholder="your_login" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem;">Create Account</button>
+      <p style="text-align:center;margin-top:1rem;font-size:0.8rem;color:var(--muted)">
+        Already have one? <button type="button" id="show-login" style="background:none;border:none;color:var(--blue);cursor:pointer;font-size:0.8rem;">Sign in</button>
+      </p>
+    </form>
+
+  </div>
+</div>
+
+<!-- ─── APP ─────────────────────────────────────────────────────────── -->
+<div id="app" style="display:var(--app-display,none)">
+
+  <header>
+    <h2>💸 Debt Tracker</h2>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <span style="font-size:0.85rem;color:var(--muted)" id="username-display"></span>
+      <button class="btn btn-ghost" id="btn-logout" style="padding:0.4rem 0.8rem;font-size:0.8rem;">Logout</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div id="page-dashboard" class="page active"></div>
+    <div id="page-form"      class="page"></div>
+    <div id="page-detail"    class="page"></div>
+  </div>
+
+</div>
+
+<!-- ─── TOAST ────────────────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

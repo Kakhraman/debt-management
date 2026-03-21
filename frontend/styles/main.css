@@ -1,0 +1,307 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #22263a;
+  --border: #2e3352;
+  --text: #e2e8f0;
+  --muted: #8892a4;
+  --green: #22c55e;
+  --green-dim: #16432d;
+  --red: #ef4444;
+  --red-dim: #3d1515;
+  --orange: #f59e0b;
+  --orange-dim: #3d2a07;
+  --blue: #3b82f6;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ─── AUTH ─────────────────────────────────────── */
+#auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.auth-box h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+.auth-box p  { color: var(--muted); margin-bottom: 1.75rem; font-size: 0.875rem; }
+
+/* ─── LAYOUT ────────────────────────────────────── */
+#app { display: none; min-height: 100vh; }
+
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h2 { font-size: 1.1rem; }
+
+.main { padding: 1.5rem; max-width: 900px; margin: 0 auto; }
+
+/* ─── FORMS ─────────────────────────────────────── */
+.form-group { margin-bottom: 1rem; }
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 0.4rem;
+}
+
+input, select, textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color .15s;
+}
+
+input:focus, select:focus, textarea:focus { border-color: var(--blue); }
+select option { background: var(--surface2); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* ─── BUTTONS ───────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: opacity .15s, transform .1s;
+}
+.btn:hover { opacity: .85; }
+.btn:active { transform: scale(.97); }
+
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-danger  { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
+.btn-ghost   { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-green   { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+.btn-full    { width: 100%; justify-content: center; }
+
+/* ─── ANALYTICS CARDS ───────────────────────────── */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+}
+
+.stat-card .label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 0.5rem; }
+.stat-card .value { font-size: 1.75rem; font-weight: 700; }
+.stat-card.positive .value { color: var(--green); }
+.stat-card.negative .value { color: var(--red); }
+.stat-card.neutral  .value { color: var(--text); }
+.stat-card.warning  .value { color: var(--orange); }
+
+/* ─── FILTERS ───────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all .15s;
+}
+.filter-btn:hover { border-color: var(--blue); color: var(--text); }
+.filter-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+/* ─── DEBT CARDS ────────────────────────────────── */
+.debt-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.debt-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.debt-card:hover { border-color: var(--blue); background: var(--surface2); }
+.debt-card.owed  { border-left: 3px solid var(--green); }
+.debt-card.owe   { border-left: 3px solid var(--red); }
+.debt-card.overdue { border-left: 3px solid var(--orange); background: color-mix(in srgb, var(--surface) 95%, var(--orange)); }
+.debt-card.closed { opacity: .5; }
+
+.debt-card-info { flex: 1; min-width: 0; }
+.debt-card-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.debt-card-meta  { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+
+.debt-card-amount { text-align: right; white-space: nowrap; }
+.debt-card-amount .amount { font-size: 1.1rem; font-weight: 700; }
+.debt-card-amount .amount.positive { color: var(--green); }
+.debt-card-amount .amount.negative { color: var(--red); }
+.debt-card-amount .remaining { font-size: 0.75rem; color: var(--muted); }
+
+.tag {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.tag-green  { background: var(--green-dim); color: var(--green); }
+.tag-red    { background: var(--red-dim); color: var(--red); }
+.tag-orange { background: var(--orange-dim); color: var(--orange); }
+.tag-muted  { background: var(--surface2); color: var(--muted); }
+
+/* ─── DEBT DETAIL ────────────────────────────────── */
+.back-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.875rem; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 1.25rem; padding: 0; }
+.back-btn:hover { color: var(--text); }
+
+.detail-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.detail-header h2 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+.detail-header .meta { color: var(--muted); font-size: 0.875rem; margin-bottom: 1rem; }
+
+.detail-amounts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.amount-block { text-align: center; }
+.amount-block .lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.amount-block .val { font-size: 1.3rem; font-weight: 700; margin-top: 0.2rem; }
+
+.progress-bar {
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.75rem;
+}
+.progress-fill { height: 100%; border-radius: 999px; transition: width .4s; }
+.progress-fill.green  { background: var(--green); }
+.progress-fill.red    { background: var(--red); }
+.progress-fill.orange { background: var(--orange); }
+
+/* ─── PAYMENT SECTION ────────────────────────────── */
+.section-title { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 0.75rem; }
+
+.payment-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+.payment-form .form-group { flex: 1; margin: 0; }
+
+.payment-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.payment-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+.payment-item .p-date { color: var(--muted); }
+.payment-item .p-amount { font-weight: 600; color: var(--green); }
+
+/* ─── MODAL / PAGE TRANSITIONS ──────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ─── EMPTY STATE ───────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+}
+.empty svg { margin-bottom: 1rem; opacity: .4; }
+.empty p { font-size: 0.9rem; }
+
+/* ─── TOAST ─────────────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  z-index: 1000;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all .3s;
+  max-width: 320px;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+#toast.success { border-color: var(--green); color: var(--green); }
+#toast.error   { border-color: var(--red);   color: var(--red); }
+
+/* ─── SCROLLBAR ─────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
