@@ -13,7 +13,15 @@ function readDb(filename) {
   }
 }
 
+function ensureDir() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+}
+
 function writeDb(filename, data) {
+  ensureDir(); // 👈 add this
+
   const filePath = path.join(DATA_DIR, `${filename}.json`);
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
