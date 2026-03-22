@@ -159,6 +159,49 @@ select option { background: var(--surface2); }
 .filter-btn:hover { border-color: var(--blue); color: var(--text); }
 .filter-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
 
+/* ─── CURRENCY BAR ──────────────────────────────── */
+.currency-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.currency-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-right: 0.25rem;
+}
+
+.currency-btn {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+.currency-btn:hover { border-color: var(--blue); color: var(--text); }
+.currency-btn.active { background: var(--surface2); border-color: var(--blue); color: var(--blue); }
+
+.rates-badge {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-left: 0.25rem;
+}
+
+.converted-amount {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.15rem;
+}
+
 /* ─── DEBT CARDS ────────────────────────────────── */
 .debt-list { display: flex; flex-direction: column; gap: 0.75rem; }
 

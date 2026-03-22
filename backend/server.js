@@ -6,6 +6,7 @@ const path = require('path');
 const authRoutes = require('./routes/authRoutes');
 const debtRoutes = require('./routes/debtRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const ratesRoutes = require('./routes/ratesRoutes');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/auth', authRoutes);
 app.use('/debts', debtRoutes);
 app.use('/analytics', analyticsRoutes);
+app.use('/rates', ratesRoutes);
 
 // Error handler
 app.use(errorMiddleware);

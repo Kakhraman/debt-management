@@ -55,4 +55,7 @@ export const api = {
 
   // Analytics
   getAnalytics: () => request('GET', '/analytics'),
+
+  // Rates
+  getRates: (base = 'USD') => request('GET', `/rates?base=${base}`),
 };
