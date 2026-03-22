@@ -1,5 +1,6 @@
 import { api } from '../js/api.js';
 import { showToast } from '../js/utils.js';
+import { CURRENCIES } from '../js/currency.js';
 
 export async function renderDebtDetail(id, onBack) {
   const page = document.getElementById('page-detail');
@@ -14,6 +15,10 @@ export async function renderDebtDetail(id, onBack) {
     return;
   }
 
+  renderView(page, debt, id, onBack);
+}
+
+function renderView(page, debt, id, onBack) {
   const isOwed = debt.type === 'owed';
   const colorClass = debt.isOverdue ? 'orange' : isOwed ? 'green' : 'red';
   const paidPct = debt.amount > 0 ? Math.min(100, ((debt.amount - debt.remaining) / debt.amount) * 100) : 100;
@@ -21,14 +26,16 @@ export async function renderDebtDetail(id, onBack) {
   const paid = debt.amount - debt.remaining;
 
   let statusTag = '';
-  if (debt.isClosed)      statusTag = `<span class="tag tag-muted">Closed</span>`;
+  if (debt.isClosed)       statusTag = `<span class="tag tag-muted">Closed</span>`;
   else if (debt.isOverdue) statusTag = `<span class="tag tag-orange">Overdue</span>`;
   else if (isOwed)         statusTag = `<span class="tag tag-green">Active · Incoming</span>`;
   else                     statusTag = `<span class="tag tag-red">Active · Outgoing</span>`;
 
   page.innerHTML = `
     <button class="back-btn" id="btn-back">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
       Dashboard
     </button>
 
@@ -39,7 +46,10 @@ export async function renderDebtDetail(id, onBack) {
           <div class="meta">${esc(debt.person)} · Created ${fmtDate(debt.createdAt)} · Due ${due}</div>
           ${statusTag}
         </div>
-        <button class="btn btn-danger" id="btn-delete">Delete</button>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn btn-ghost" id="btn-edit">Edit</button>
+          <button class="btn btn-danger" id="btn-delete">Delete</button>
+        </div>
       </div>
 
       <div class="detail-amounts">
@@ -75,7 +85,7 @@ export async function renderDebtDetail(id, onBack) {
     ` : ''}
 
     <p class="section-title">Payment History (${debt.payments.length})</p>
-    <div class="payment-list" id="payment-list">
+    <div class="payment-list">
       ${debt.payments.length === 0
         ? `<div class="empty"><p>No payments yet</p></div>`
         : debt.payments.map((p) => `
@@ -88,6 +98,10 @@ export async function renderDebtDetail(id, onBack) {
   `;
 
   document.getElementById('btn-back').addEventListener('click', onBack);
+
+  document.getElementById('btn-edit').addEventListener('click', () => {
+    renderEditForm(page, debt, id, onBack);
+  });
 
   document.getElementById('btn-delete').addEventListener('click', async () => {
     if (!confirm(`Delete "${debt.title}"? This cannot be undone.`)) return;
@@ -105,19 +119,99 @@ export async function renderDebtDetail(id, onBack) {
       const input = document.getElementById('payment-amount');
       const amount = parseFloat(input.value);
       if (!amount || amount <= 0) return showToast('Enter a valid amount', 'error');
-
       const btn = document.getElementById('btn-pay');
       btn.disabled = true;
       try {
         await api.addPayment(id, amount);
         showToast('Payment added', 'success');
-        await renderDebtDetail(id, onBack);
+        const updated = await api.getDebt(id);
+        renderView(page, updated, id, onBack);
       } catch (err) {
         showToast(err.message, 'error');
         btn.disabled = false;
       }
     });
   }
+}
+
+function renderEditForm(page, debt, id, onBack) {
+  const dueDateValue = debt.dueDate ? debt.dueDate.slice(0, 10) : '';
+
+  page.innerHTML = `
+    <button class="back-btn" id="btn-back-edit">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Cancel
+    </button>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;max-width:520px;">
+      <h2 style="margin-bottom:1.5rem;">Edit Debt</h2>
+      <form id="edit-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" name="title" value="${esc(debt.title)}" required />
+          </div>
+          <div class="form-group">
+            <label>Person</label>
+            <input type="text" name="person" value="${esc(debt.person)}" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Amount</label>
+            <input type="number" name="amount" value="${debt.amount}" min="0.01" step="0.01" required />
+          </div>
+          <div class="form-group">
+            <label>Currency</label>
+            <select name="currency">
+              ${CURRENCIES.map((c) => `<option value="${c}"${c === debt.currency ? ' selected' : ''}>${c}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select name="type">
+            <option value="owed"${debt.type === 'owed' ? ' selected' : ''}>Owed to me (they owe me)</option>
+            <option value="owe"${debt.type === 'owe' ? ' selected' : ''}>I owe (I owe them)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Due Date <span style="color:var(--muted)">(optional)</span></label>
+          <input type="date" name="dueDate" value="${dueDateValue}" />
+        </div>
+        <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
+          <button type="submit" class="btn btn-primary btn-full">Save Changes</button>
+          <button type="button" class="btn btn-ghost" id="btn-cancel-edit">Cancel</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  document.getElementById('btn-back-edit').addEventListener('click', () => renderView(page, debt, id, onBack));
+  document.getElementById('btn-cancel-edit').addEventListener('click', () => renderView(page, debt, id, onBack));
+
+  document.getElementById('edit-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const updates = Object.fromEntries(fd);
+    if (!updates.dueDate) delete updates.dueDate;
+
+    const btn = e.target.querySelector('[type=submit]');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    try {
+      const updated = await api.updateDebt(id, updates);
+      showToast('Debt updated', 'success');
+      renderView(page, updated, id, onBack);
+    } catch (err) {
+      showToast(err.message, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    }
+  });
 }
 
 function fmtAmt(n) {

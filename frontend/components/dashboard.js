@@ -61,7 +61,7 @@ export function initDashboard(onSelect, onNew) {
     btn.classList.add('active');
     await fetchRates();
     renderList();
-    renderAnalytics(document.getElementById('analytics-container'), displayCurrency, currentRates);
+    renderAnalytics(document.getElementById('analytics-container'), displayCurrency, currentRates, allDebts);
   });
 
   loadDashboard();
@@ -86,7 +86,7 @@ export async function loadDashboard() {
       .then((d) => { allDebts = d; })
       .catch((err) => { showToast(err.message, 'error'); allDebts = []; }),
   ]);
-  renderAnalytics(document.getElementById('analytics-container'), displayCurrency, currentRates);
+  renderAnalytics(document.getElementById('analytics-container'), displayCurrency, currentRates, allDebts);
   renderList();
 }
 

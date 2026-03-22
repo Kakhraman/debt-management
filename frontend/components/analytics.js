@@ -1,42 +1,66 @@
-import { api } from '../js/api.js';
-
-export async function renderAnalytics(container, displayCurrency, rates) {
+// Compute analytics from debts list, converting every amount to displayCurrency using rates.
+// rates[X] = how many X per 1 displayCurrency (from loadRates(displayCurrency))
+// → to convert amount in currency C to displayCurrency: amount / rates[C]
+export function renderAnalytics(container, displayCurrency, rates, debts) {
   if (!container) return;
-  try {
-    const data = await api.getAnalytics();
 
-    // If rates available and display currency differs from raw totals (which are mixed),
-    // show a note that analytics sums are in original currencies (conversion not meaningful for mixed)
-    const note = displayCurrency
-      ? `<div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">Totals are native currency sums</div>`
-      : '';
+  let totalOwedToMe = 0;
+  let totalIOwe = 0;
+  let overdueCount = 0;
+  let conversionMissing = false;
 
-    container.innerHTML = `
-      <div class="analytics-grid">
-        <div class="stat-card positive">
-          <div class="label">Owed to me</div>
-          <div class="value">+${fmt(data.totalOwedToMe)}</div>
-          ${note}
-        </div>
-        <div class="stat-card negative">
-          <div class="label">I owe</div>
-          <div class="value">-${fmt(data.totalIOwe)}</div>
-          ${note}
-        </div>
-        <div class="stat-card ${data.balance >= 0 ? 'positive' : 'negative'}">
-          <div class="label">Balance</div>
-          <div class="value">${data.balance >= 0 ? '+' : ''}${fmt(data.balance)}</div>
-          ${note}
-        </div>
-        <div class="stat-card warning">
-          <div class="label">Overdue</div>
-          <div class="value">${data.overdueCount}</div>
-        </div>
-      </div>
-    `;
-  } catch {
-    container.innerHTML = '';
+  for (const debt of (debts || [])) {
+    if (debt.isClosed) continue;
+
+    let remaining = debt.remaining;
+
+    if (debt.currency !== displayCurrency) {
+      if (rates && rates[debt.currency]) {
+        remaining = remaining / rates[debt.currency];
+      } else {
+        conversionMissing = true;
+        continue; // skip debts we can't convert
+      }
+    }
+
+    if (debt.type === 'owed') totalOwedToMe += remaining;
+    else                      totalIOwe     += remaining;
+
+    if (debt.isOverdue) overdueCount++;
   }
+
+  const balance = totalOwedToMe - totalIOwe;
+  const cur = displayCurrency || '';
+  const warn = conversionMissing
+    ? `<div style="font-size:0.7rem;color:var(--orange);margin-top:0.3rem;">Some debts skipped (no rate)</div>`
+    : '';
+
+  container.innerHTML = `
+    <div class="analytics-grid">
+      <div class="stat-card positive">
+        <div class="label">Owed to me</div>
+        <div class="value">+${fmt(totalOwedToMe)}</div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem;">${cur}</div>
+        ${warn}
+      </div>
+      <div class="stat-card negative">
+        <div class="label">I owe</div>
+        <div class="value">-${fmt(totalIOwe)}</div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem;">${cur}</div>
+        ${warn}
+      </div>
+      <div class="stat-card ${balance >= 0 ? 'positive' : 'negative'}">
+        <div class="label">Balance</div>
+        <div class="value">${balance >= 0 ? '+' : ''}${fmt(balance)}</div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem;">${cur}</div>
+        ${warn}
+      </div>
+      <div class="stat-card warning">
+        <div class="label">Overdue</div>
+        <div class="value">${overdueCount}</div>
+      </div>
+    </div>
+  `;
 }
 
 function fmt(n) {
