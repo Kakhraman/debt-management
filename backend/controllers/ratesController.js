@@ -6,7 +6,7 @@ async function getRatesHandler(req, res, next) {
     const rates = await getRates(base);
 
     // Return only the currencies the app uses + common ones
-    const supported = ['usd', 'eur', 'uzs', 'rub', 'gbp', 'jpy', 'cny', 'try', 'kzt'];
+    const supported = ['usd', 'eur', 'uzs', 'rub'];
     const filtered = {};
     for (const cur of supported) {
       if (rates[cur] !== undefined) filtered[cur.toUpperCase()] = rates[cur];
