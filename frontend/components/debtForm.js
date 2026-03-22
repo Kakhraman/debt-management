@@ -34,7 +34,6 @@ export function initDebtForm(onSaved, onCancel) {
               <option value="EUR">EUR</option>
               <option value="UZS">UZS</option>
               <option value="RUB">RUB</option>
-              <option value="GBP">GBP</option>
             </select>
           </div>
         </div>

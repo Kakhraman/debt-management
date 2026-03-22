@@ -1,7 +1,7 @@
 import { api } from './api.js';
 
 // Supported display currencies
-export const CURRENCIES = ['USD', 'EUR', 'UZS', 'RUB', 'GBP'];
+export const CURRENCIES = ['USD', 'EUR', 'UZS', 'RUB'];
 
 const ratesCache = {}; // { USD: { EUR: 0.86, UZS: 12171, ... }, ... }
 
